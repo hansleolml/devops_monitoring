@@ -24,3 +24,11 @@ Exponer con LoadBalancer
 Verificar las IPs asignadas:
     kubectl get svc -n monitoring
 
+
+
+kubectl patch svc prometheus-server -n monitoring --patch-file patch.json
+{
+  "spec": {
+    "type": "LoadBalancer"
+  }
+}
