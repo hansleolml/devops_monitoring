@@ -1,10 +1,10 @@
 resource "azurerm_resource_group" "rg_01" {
-  name     = "rg-dmc-dev-eastus2-01"
-  location = "East US 2"
+  name     = "rg-hans-dev-eastus-01"
+  location = "East US"
 }
 
 resource "azurerm_kubernetes_cluster" "aks_01" {
-  name                = "aks-dmc-dev-eastus2-01"
+  name                = "aks-hans-dev-eastus-01"
   location            = azurerm_resource_group.rg_01.location
   resource_group_name = azurerm_resource_group.rg_01.name
   dns_prefix          = "aksdns"
