@@ -5,13 +5,13 @@ serverFiles:
       rules:
       - alert: DiskUsageHigh
         expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) 
-              / node_filesystem_size_bytes{mountpoint="/"} * 100 > 20.55
+              / node_filesystem_size_bytes{mountpoint="/"} * 100 > 21.55
         for: 1m
         labels:
           severity: critical
         annotations:
           summary: "Disco alto en {{ $labels.instance }}"
-          description: "El nodo {{ $labels.instance }} superó 20.55% de uso de disco en / durante 1m."
+          description: "El nodo {{ $labels.instance }} superó 21.55% de uso de disco en / durante 1m."
     - name: memory-alerts
       rules:
       - alert: MemoryUsageHigh
@@ -30,11 +30,11 @@ alertmanager:
       smtp_smarthost: 'smtp.gmail.com:587'
       smtp_from: 'hansleolml@gmail.com'
       smtp_auth_username: 'hansleolml@gmail.com'
-      smtp_auth_password: ''   # no es tu clave normal, es un App Password
+      smtp_auth_password: 'dslq usjc awye tlmq'   # no es tu clave normal, es un App Password
       smtp_require_tls: true
     route:
       receiver: 'correo'
     receivers:
     - name: 'correo'
       email_configs:
-      - to: 'hansleolml@gmail.com'
+      - to: 'josedk20@gmail.com'

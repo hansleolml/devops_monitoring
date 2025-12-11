@@ -1,6 +1,10 @@
 resource "azurerm_resource_group" "rg_01" {
   name     = "rg-hans-dev-eastus-01"
   location = "East US"
+  tags = {
+    Project = "Monitoring"
+  }
+
 }
 
 resource "azurerm_kubernetes_cluster" "aks_01" {
@@ -12,7 +16,7 @@ resource "azurerm_kubernetes_cluster" "aks_01" {
   default_node_pool {
     name       = "default"
     node_count = 1
-    vm_size    = "Standard_D2_v2"
+    vm_size    = "standard_a2_v2"
   }
 
   identity {
