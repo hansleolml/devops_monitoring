@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-saludo-deployment
+  labels:
+    app: app-saludo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-saludo
+  template:
+    metadata:
+      labels:
+        app: app-saludo
+    spec:
+      containers:
+        - name: app-saludo
+          image: hansleolml/app-saludo-dmc-01:v2.0
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: app-saludo
+  ports:
+    - port: 80           # Puerto expuesto por el Service
+      targetPort: 5000   # Puerto de la app Python dentro del contenedor
