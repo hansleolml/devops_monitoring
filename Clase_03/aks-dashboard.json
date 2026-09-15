@@ -1,0 +1,115 @@
+{
+    "id": null,
+    "title": "AKS - Dashboard Corregido",
+    "tags": ["aks", "monitoring", "prometheus"],
+    "timezone": "browser",
+    "schemaVersion": 30,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "Uso de CPU (%) por nodo",
+        "targets": [
+          {
+            "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "percent" }
+        },
+        "gridPos": { "x": 0, "y": 0, "w": 8, "h": 6 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Uso de Memoria (%) por nodo",
+        "targets": [
+          {
+            "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "percent" }
+        },
+        "gridPos": { "x": 8, "y": 0, "w": 8, "h": 6 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Uso de Disco (%) en /",
+        "targets": [
+          {
+            "expr": "(1 - (node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/\"})) * 100",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "percent" }
+        },
+        "gridPos": { "x": 0, "y": 6, "w": 8, "h": 6 }
+      },
+      {
+        "type": "bargauge",
+        "title": "Cantidad de Pods por Namespace",
+        "targets": [
+          {
+            "expr": "count(kube_pod_info) by (namespace)"
+          }
+        ],
+        "gridPos": { "x": 8, "y": 6, "w": 8, "h": 6 }
+      },
+      {
+        "type": "stat",
+        "title": "Pods en estado Running",
+        "targets": [
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Running\"})",
+            "legendFormat": "Running"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 12, "w": 4, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Pods en estado Pending",
+        "targets": [
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Pending\"})",
+            "legendFormat": "Pending"
+          }
+        ],
+        "gridPos": { "x": 4, "y": 12, "w": 4, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Pods en estado Failed",
+        "targets": [
+          {
+            "expr": "count(kube_pod_status_phase{phase=\"Failed\"})",
+            "legendFormat": "Failed"
+          }
+        ],
+        "gridPos": { "x": 8, "y": 12, "w": 4, "h": 4 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Tráfico de Red (Rx / Tx)",
+        "targets": [
+          {
+            "expr": "rate(node_network_receive_bytes_total[5m])",
+            "legendFormat": "Rx {{instance}}"
+          },
+          {
+            "expr": "rate(node_network_transmit_bytes_total[5m])",
+            "legendFormat": "Tx {{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "bytes" }
+        },
+        "gridPos": { "x": 0, "y": 16, "w": 16, "h": 6 }
+      }
+    ]
+  }
+  
