@@ -106,3 +106,65 @@ kubectl logs test-logs -n dev
 kubectl logs -f test-logs -n dev
 ```
 
+## 8. Ejemplo: pintar 404 de Nginx en Loki
+
+Nginx escribe el **access log** en stdout (incluye el código HTTP). Promtail lo envía a Loki y en Grafana puedes filtrar solo los `404`.
+
+Usa el manifiesto `pods.yaml` (Nginx + Service LoadBalancer).
+
+### 8.1. Desplegar Nginx
+
+```bash
+kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f pods.yaml -n dev
+```
+
+### 8.2. Esperar la IP pública
+
+```bash
+kubectl get svc nginx-service -n dev -w
+```
+
+Cuando `EXTERNAL-IP` deje de estar en `<pending>`, copia la IP.
+
+### 8.3. Generar tráfico 200 y 404
+
+```bash
+export NGINX_IP=$(kubectl get svc nginx-service -n dev -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+# 200: página de bienvenida de Nginx
+for i in {1..20}; do curl -s -o /dev/null -w "%{http_code}\n" http://$NGINX_IP/; done
+
+# 404: ruta que no existe
+for i in {1..20}; do curl -s -o /dev/null -w "%{http_code}\n" http://$NGINX_IP/no-existe; done
+```
+
+### 8.4. Verificar el access log en el pod
+
+Deberías ver líneas como `GET / HTTP/1.1" 200` y `GET /no-existe HTTP/1.1" 404`.
+
+```bash
+kubectl logs nginx-pod -n dev
+kubectl logs -f nginx-pod -n dev
+```
+
+### 8.5. Ver los 404 en Grafana (Loki)
+
+1. Entra a Grafana → **Explore** (o el dashboard **Loki Kubernetes Logs**).
+2. Data source: **Loki**.
+3. Consultas:
+
+```logql
+{namespace="dev"}
+```
+
+```logql
+{namespace="dev"} |= "404"
+```
+
+```logql
+{namespace="dev"} |= " 200 "
+```
+
+En el dashboard, elige `namespace = dev` y en **Search Query** escribe `404`. El panel de barras cuenta esos logs y el panel de logs los lista.
+
