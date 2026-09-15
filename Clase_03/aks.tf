@@ -1,10 +1,10 @@
 resource "azurerm_resource_group" "rg_01" {
-  name     = "rg-hans-dev-eastus-01"
+  name     = "rg-monitoring-dev-eastus-01"
   location = "East US"
 }
 
 # resource "azurerm_log_analytics_workspace" "law_01" {
-#   name                = "law-hans-dev-eastus-01"
+#   name                = "law-monitoring-dev-eastus-01"
 #   location            = azurerm_resource_group.rg_01.location
 #   resource_group_name = azurerm_resource_group.rg_01.name
 #   sku                 = "PerGB2018"
@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "rg_01" {
 # }
 
 resource "azurerm_kubernetes_cluster" "aks_01" {
-  name                = "aks-hans-dev-eastus-01"
+  name                = "aks-monitoring-dev-eastus-01"
   location            = azurerm_resource_group.rg_01.location
   resource_group_name = azurerm_resource_group.rg_01.name
   dns_prefix          = "aksdns"
@@ -20,7 +20,7 @@ resource "azurerm_kubernetes_cluster" "aks_01" {
   default_node_pool {
     name       = "default"
     node_count = 1
-    vm_size    = "Standard_D2_v2"
+    vm_size    = "standard_a2_v2"
   }
 
   identity {
